@@ -55,12 +55,12 @@ function getTransportsForEnv(): winston.transport[] {
         transports.console,
     ];
 
-    if (isDevelopment) {
-        transportsForEnv.push(
-            transports.genericFile, 
-            transports.errorFile
-        );
-    }
+    // if (isDevelopment) {
+    //     transportsForEnv.push(
+    //         transports.genericFile, 
+    //         transports.errorFile
+    //     );
+    // }
 
     return transportsForEnv;
 }
@@ -79,13 +79,13 @@ const format: winston.Logform.Format = winston.format.combine(
 // to all evironments.
 const transports = {
     console: new winston.transports.Console(),
-    genericFile: new winston.transports.File({
-        filename: ALL_LOGS_FILENAME,
-    }),
-    errorFile: new winston.transports.File({
-        level: "error",
-        filename: ERROR_LOG_FILENAME
-    }),
+    // genericFile: new winston.transports.File({
+    //     filename: ALL_LOGS_FILENAME,
+    // }),
+    // errorFile: new winston.transports.File({
+    //     level: "error",
+    //     filename: ERROR_LOG_FILENAME
+    // }),
 };
 
 // Configure custom colors for each log level. 
