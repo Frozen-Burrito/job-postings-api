@@ -2,6 +2,7 @@ import path from "path";
 import express, { Application, Request, Response } from "express";
 
 import Log from "./utils/logger";
+import requestLoggerMiddleware from "./middleware/morgan_http";
 
 class App {
 
@@ -21,7 +22,15 @@ class App {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
 
-        // this.app.use(reqLoggerMiddleware);
+        this.app.use(requestLoggerMiddleware);
+
+        this.app.use("/hello-world", (req, res) => {
+            res.send("Hello World!");
+        });
+
+        this.app.use("/echo/:msg", (req, res) => {
+            res.send(req.params.msg);
+        });
 
         // this.app.use("/api/v1", this.apiRouter.router);
     }
