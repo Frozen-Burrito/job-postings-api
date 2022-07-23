@@ -46,6 +46,25 @@ function getLogLevel(): logLevel {
     return isProduction ? "http" : "debug";
 }
 
+function getTransportsForEnv(): winston.transport[] {
+    const env: environment = process.env.NODE_ENV as environment || "development";
+
+    const isDevelopment: boolean = env === "development";
+
+    let transportsForEnv: winston.transport[] = [
+        transports.console,
+    ];
+
+    if (isDevelopment) {
+        transportsForEnv.push(
+            transports.genericFile, 
+            transports.errorFile
+        );
+    }
+
+    return transportsForEnv;
+}
+
 // Define the format that winston will use for the log messages.
 // This applies to all evironments.
 const format: winston.Logform.Format = winston.format.combine(
@@ -80,11 +99,7 @@ const Logger: winston.Logger = winston.createLogger({
     level: getLogLevel(),
     levels: logLevels.levels,
     format,
-    transports: [
-        transports.console,
-        transports.genericFile,
-        transports.errorFile,
-    ],
+    transports: getTransportsForEnv(),
 });
 
 export default Logger;
