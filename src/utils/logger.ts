@@ -1,7 +1,7 @@
 import path from "path";
 import winston from "winston";
 
-const LOGS_DIR = "../../logs";
+const LOGS_DIR = "../logs";
 const ALL_LOGS_FILENAME = path.join(LOGS_DIR, "everything.log");
 const ERROR_LOG_FILENAME = path.join(LOGS_DIR, "errors.log");
 
