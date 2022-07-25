@@ -1,12 +1,17 @@
 import path from "path";
-import express, { Application, Request, Response } from "express";
+import express, { Application } from "express";
+
+import { MainRouter } from "./routes";
 
 import Log from "./utils/logger";
 import requestLoggerMiddleware from "./middleware/morgan_http";
+import { connectMongoDbAtlas } from "./utils/mongodb_connector";
 
 class App {
 
     public app: Application = express();
+
+    private mainRouter: MainRouter = new MainRouter();
 
     constructor() {
         this.init();
@@ -16,7 +21,15 @@ class App {
     private init(): void {
 
         if (process.env.NODE_ENV === "development") {
-            require("dotenv").config({ path: "./.env.development.local"});
+            // Load environment variables from local .env file.
+            const dotenv = require("dotenv");
+            const envPath: string = path.resolve(__dirname, ".env.development.local");
+        
+            const envResult = dotenv.config({ path: envPath});
+        
+            if (envResult.error) {
+                throw envResult.error;
+            }
         }
 
         this.app.use(express.json());
@@ -24,22 +37,16 @@ class App {
 
         this.app.use(requestLoggerMiddleware);
 
-        this.app.use("/hello-world", (req, res) => {
-            res.send("Hello World!");
-        });
-
-        this.app.use("/echo/:msg", (req, res) => {
-            res.send(req.params.msg);
-        });
-
-        // this.app.use("/api/v1", this.apiRouter.router);
+        this.app.use("/api/v1", this.mainRouter.router);
     }
 
     private async setupDataSource(): Promise<void> {
         try {
-            const mongoUri = process.env.MONGO_URI ?? "";
+            const connectionString = process.env.MONGODB_ATLAS_URL ?? "";
 
-            Log.info(`Server connected to MongoDB Atlas with host ${0}`);
+            const mongoClient = await connectMongoDbAtlas(connectionString);
+
+            Log.info(`Server connected to MongoDB Atlas with host ${mongoClient.connection.host}`);
 
         } catch (error: unknown) {
             // For some reason, the server was unnable to connect to MongoDB Atlas.
