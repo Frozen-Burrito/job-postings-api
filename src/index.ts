@@ -11,7 +11,11 @@ try {
 
 } catch (error: unknown) {
     // If there is an error, fail instantly and notify about it.
-    const msg = (error as Error).message || "An unknown error occurred during app.listen().";
+    if (error) {
+        const msg = (error as Error).message;
 
-    Log.error(msg);
+        Log.error(msg);
+    } else {
+        Log.error("An unknown error occurred during app.listen()");
+    }
 }
